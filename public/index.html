@@ -148,9 +148,13 @@ ShoppingList.prototype.addItem = function(name) {
     ajax.done(this.getItems.bind(this));
 };
 ShoppingList.prototype.deleteItem = function(id) {
+    var ID = {'id': id};
     var ajax = $.ajax('/items/' + id, {
         type: 'DELETE',
-        dataType: 'json'
+        data: JSON.stringify(ID),
+        dataType: 'json',
+        contentType: 'application/json'
+        
     });
     ajax.done(this.getItems.bind(this));
 };
