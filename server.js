@@ -1,7 +1,10 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
+var chai = require('chai')
+  , chaiHttp = require('chai-http');
 
+chai.use(chaiHttp);
 var Storage = function () {
     this.items = [];
     this.id = 0;
