@@ -17,47 +17,59 @@
 * {
     box-sizing: border-box;
 }
+
 body {
     font-size: 2em;
     color: #1E2835;
     background-color: #F8F8F8;
 }
+
 .light {
     color: #C7CACD;
 }
+
 a, a:active, a:hover, a:visited {
     color: #F37A7B;
 }
+
 div#main {
     display: flex;
     align-items: center;
     flex-direction: column;
 }
+
 input {
     width: 400px;
     border: 0;
     background-color: #F8F8F8;
 }
+
 div>input {
     width: 400px;
 }
+
 li input {
     width: 380;
 }
+
 div>input, li {
     border: 2px solid #C7CACD;
     padding: 10px;
 }
+
 form, ul {
     margin: 0;
 }
+
 ul {
     padding-left: 0;
 }
+
 li {
     width: 400px;
     list-style-type: none;
 }
+
 div.delete {
     float: right;
 }
@@ -68,8 +80,10 @@ var ShoppingList = function() {
     this.items = [];
     this.itemList = $('#item-list');
     this.itemListTemplate = Handlebars.compile($("#item-list-template").html());
+
     this.input = $('#item-input');
     this.input.keydown(this.onAddInputKeydown.bind(this));
+
     this.main = $('#main');
     this.main.on('dblclick', 'li',
                  this.onEditItemClicked.bind(this));
@@ -79,12 +93,15 @@ var ShoppingList = function() {
                  this.onEditFocusOut.bind(this));
     this.main.on('click', 'li .delete-item',
                  this.onDeleteItemClicked.bind(this));
+
     this.getItems();
 };
+
 ShoppingList.prototype.onAddInputKeydown = function(event) {
     if (event.which != 13) {
         return;
     }
+
     var input = $(event.target);
     var value = input.val().trim();
     if (value != '') {
@@ -93,6 +110,7 @@ ShoppingList.prototype.onAddInputKeydown = function(event) {
     input.val('');
     event.preventDefault();
 };
+
 ShoppingList.prototype.onEditItemClicked = function(event) {
     var item = $(event.target).parents('li');
     var display = item.children('.display');
@@ -104,6 +122,7 @@ ShoppingList.prototype.onEditItemClicked = function(event) {
     display.hide();
     event.preventDefault();
 };
+
 ShoppingList.prototype.onEditInputKeydown = function(event) {
     if (event.which != 13) {
         return;
@@ -111,6 +130,7 @@ ShoppingList.prototype.onEditInputKeydown = function(event) {
     var input = $(event.target);
     input.blur();
 };
+
 ShoppingList.prototype.onEditFocusOut = function(event) {
     var item = $(event.target).parents('li');
     var id = item.data('id');
@@ -118,18 +138,22 @@ ShoppingList.prototype.onEditFocusOut = function(event) {
     var input = item.children('input');
     var name = display.children('.name');
     var value = input.val().trim();
+
     if (value != '') {
         this.editItem(id, value);
         name.text(value);
     }
+
     input.hide();
     display.show();
     event.preventDefault();
 };
+
 ShoppingList.prototype.onDeleteItemClicked = function(event) {
     var id = $(event.target).parents('li').data('id');
     this.deleteItem(id);
 };
+
 ShoppingList.prototype.getItems = function() {
     var ajax = $.ajax('/items', {
         type: 'GET',
@@ -137,6 +161,7 @@ ShoppingList.prototype.getItems = function() {
     });
     ajax.done(this.onGetItemsDone.bind(this));
 };
+
 ShoppingList.prototype.addItem = function(name) {
     var item = {'name': name};
     var ajax = $.ajax('/items', {
@@ -147,17 +172,15 @@ ShoppingList.prototype.addItem = function(name) {
     });
     ajax.done(this.getItems.bind(this));
 };
+
 ShoppingList.prototype.deleteItem = function(id) {
-    var ID = {'id': id};
     var ajax = $.ajax('/items/' + id, {
         type: 'DELETE',
-        data: JSON.stringify(ID),
-        dataType: 'json',
-        contentType: 'application/json'
-        
+        dataType: 'json'
     });
     ajax.done(this.getItems.bind(this));
 };
+
 ShoppingList.prototype.editItem = function(id, name) {
     var item = {'name': name, 'id': id};
     var ajax = $.ajax('/items/' + id, {
@@ -168,18 +191,22 @@ ShoppingList.prototype.editItem = function(id, name) {
     });
     ajax.done(this.getItems.bind(this));
 };
+
 ShoppingList.prototype.onGetItemsDone = function(items) {
     this.items = items;
     this.updateItemsView();
 };
+
 ShoppingList.prototype.updateItemsView = function() {
     var context = {
         items: this.items
     };
+
     var itemList = $(this.itemListTemplate(context));
     this.itemList.replaceWith(itemList);
     this.itemList = itemList;
 };
+
 $(document).ready(function() {
     var app = new ShoppingList();
 });
